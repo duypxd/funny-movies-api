@@ -5,7 +5,7 @@ var bodyParser = require("body-parser");
 var mongoose = require("mongoose");
 require("dotenv").config();
 
-//routes
+//Routes
 var AuthRouter = require("./api/routes/Auth");
 
 //connect DB;

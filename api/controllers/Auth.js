@@ -7,7 +7,6 @@ var User = require("../models/User");
 exports.signUp = async (req, res) => {
   try {
     const response = await User.find({ email: req.body.email }).exec();
-    console.log("responseresponse", response);
     if (response.length > 0) {
       return res.status(422).send({
         status: false,
@@ -52,7 +51,7 @@ exports.signIn = async (req, res) => {
       if (error) {
         return res.status(400).send({
           status: true,
-          message: "password incorrect!",
+          message: "Password incorrect!",
         });
       } else if (results) {
         var token = jwt.sign(
@@ -79,6 +78,25 @@ exports.signIn = async (req, res) => {
     return res.status(400).send({
       status: false,
       message: "An unexpected error occurred.",
+    });
+  }
+};
+
+exports.getMe = async (req, res) => {
+  try {
+    const user = await User.findById({ _id: req.userData._id }).exec();
+    res.status(200).send({
+      status: true,
+      user: {
+        _id: user?.id,
+        email: user?.email,
+        createdAt: user?.email,
+      },
+    });
+  } catch (err) {
+    res.status(400).send({
+      status: false,
+      message: "User not found.",
     });
   }
 };
