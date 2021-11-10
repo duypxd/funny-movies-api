@@ -82,6 +82,12 @@ exports.signIn = async (req, res) => {
   }
 };
 
+exports.signOut = async (req, res) => {
+  try {
+    const token = jwt.destroy();
+  } catch (err) {}
+};
+
 exports.getMe = async (req, res) => {
   try {
     const user = await User.findById({ _id: req.userData._id }).exec();

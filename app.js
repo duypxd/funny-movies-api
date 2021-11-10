@@ -7,6 +7,7 @@ require("dotenv").config();
 
 //Routes
 var AuthRouter = require("./api/routes/Auth");
+var VideoRouter = require("./api/routes/Videos");
 
 //connect DB;
 mongoose.connect(process.env.DATABASE_ACCOUNT_CONNECT, {
@@ -32,6 +33,7 @@ app.use((req, res, next) => {
 
 // Routes which should handle requests
 app.use("/api/auth", AuthRouter);
+app.use("/api/video", VideoRouter);
 
 app.use((_, __, next) => {
   const err = new Error("NotFound");
