@@ -4,10 +4,10 @@ const Videos = require("../models/Videos");
 
 exports.getVideos = async (req, res) => {
   try {
-    const userId = jwt.verify(
-      req.headers.authorization.split(" ")[1],
-      process.env.JWT_KEY
-    )?._id;
+    const userId = req?.headers?.authorization
+      ? jwt.verify(req.headers.authorization.split(" ")[1], process.env.JWT_KEY)
+          ?._id
+      : undefined;
     const data = await Videos.find();
     res.status(200).send({
       status: true,
@@ -17,8 +17,8 @@ exports.getVideos = async (req, res) => {
         url: m?.url,
         authorShare: m?.authorShare,
         videoId: m?.videoId,
-        isLike: m.likes?.some((s) => userId === s),
-        isUnLikes: m.unLikes?.some((s) => userId === s),
+        isLike: userId ? m.likes?.some((s) => userId === s) : false,
+        isUnLikes: userId ? m.unLikes?.some((s) => userId === s) : false,
         createdAt: m?.createdAt,
         title: m?.title,
         desc: m?.desc,
