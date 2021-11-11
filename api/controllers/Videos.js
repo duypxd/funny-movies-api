@@ -95,6 +95,8 @@ exports.updateLikeOrDisLike = async (req, res) => {
         desc: findVideo.odesc,
         updatedAt: findVideo?.updatedAt,
         ...updateRequest,
+        likes: updateRequest.likes.length || 0,
+        unLikes: updateRequest.likes.unLikes || 0,
       },
     });
   } catch (err) {
