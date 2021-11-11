@@ -15,6 +15,8 @@ exports.getVideos = async (req, res) => {
         authorShare: m?.authorShare,
         videoId: m?.videoId,
         createdAt: m?.createdAt,
+        title: m?.title,
+        desc: m?.desc,
         updatedAt: m?.updatedAt,
         likes: m?.likes?.length || 0,
         unLikes: m?.unLikes?.length || 0,
@@ -36,6 +38,8 @@ exports.postVideo = async (req, res) => {
       url: req.body.url,
       authorShare: req.body.authorShare,
       videoId: req.body.videoId,
+      title: req.body.title,
+      desc: req.body.desc,
       createdAt: Date.now(),
     });
     const result = await video.save();
@@ -83,6 +87,8 @@ exports.updateLikeOrDisLike = async (req, res) => {
         authorShare: findVideo.authorShare,
         videoId: findVideo?.videoId,
         createdAt: findVideo?.createdAt,
+        title: findVideo.title,
+        desc: findVide.odesc,
         updatedAt: findVideo?.updatedAt,
         ...updateRequest,
       },
