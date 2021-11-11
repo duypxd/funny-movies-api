@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 
 const Videos = require("../models/Videos");
-const User = require("../models/User");
 
 exports.getVideos = async (req, res) => {
   try {
+    const userId = req.userData._id;
     const data = await Videos.find();
     res.status(200).send({
       status: true,
@@ -14,6 +14,8 @@ exports.getVideos = async (req, res) => {
         url: m?.url,
         authorShare: m?.authorShare,
         videoId: m?.videoId,
+        isLike: m.likes?.some((s) => userId === s),
+        isUnLikes: m.isUnLikes?.some((s) => userId === s),
         createdAt: m?.createdAt,
         title: m?.title,
         desc: m?.desc,
@@ -59,8 +61,7 @@ exports.postVideo = async (req, res) => {
 exports.updateLikeOrDisLike = async (req, res) => {
   try {
     const findVideo = await Videos.findById({ _id: req.params.videoId }).exec();
-    const user = await User.findById({ _id: req.userData._id }).exec();
-    const userId = user?._id?.toHexString();
+    const userId = req.userData._id;
 
     const updateRequest = {
       likes: req.body.isVote
@@ -88,7 +89,7 @@ exports.updateLikeOrDisLike = async (req, res) => {
         videoId: findVideo?.videoId,
         createdAt: findVideo?.createdAt,
         title: findVideo.title,
-        desc: findVide.odesc,
+        desc: findVideo.odesc,
         updatedAt: findVideo?.updatedAt,
         ...updateRequest,
       },
