@@ -97,6 +97,10 @@ exports.updateLikeOrDisLike = async (req, res) => {
         ...updateRequest,
         likes: updateRequest.likes.length || 0,
         unLikes: updateRequest.unLikes.length || 0,
+        isLike: userId ? updateRequest.likes?.some((s) => userId === s) : false,
+        isUnLikes: userId
+          ? updateRequest.unLikes?.some((s) => userId === s)
+          : false,
       },
     });
   } catch (err) {
