@@ -1,10 +1,13 @@
 const mongoose = require("mongoose");
-
+const jwt = require("jsonwebtoken");
 const Videos = require("../models/Videos");
 
 exports.getVideos = async (req, res) => {
   try {
-    const userId = req.userData._id;
+    const userId = jwt.verify(
+      req.headers.authorization.split(" ")[1],
+      process.env.JWT_KEY
+    )?._id;
     const data = await Videos.find();
     res.status(200).send({
       status: true,
@@ -15,7 +18,7 @@ exports.getVideos = async (req, res) => {
         authorShare: m?.authorShare,
         videoId: m?.videoId,
         isLike: m.likes?.some((s) => userId === s),
-        isUnLikes: m.isUnLikes?.some((s) => userId === s),
+        isUnLikes: m.unLikes?.some((s) => userId === s),
         createdAt: m?.createdAt,
         title: m?.title,
         desc: m?.desc,
