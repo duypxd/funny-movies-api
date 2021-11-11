@@ -100,7 +100,7 @@ exports.signIn = async (req, res) => {
   } catch (err) {
     return res.status(400).send({
       status: false,
-      message: "An unexpected error occurred.",
+      message: "Login failed. User does not exist!",
     });
   }
 };
