@@ -14,6 +14,10 @@ var VideosSchema = mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  authorShare: {
+    type: String,
+    required: [true, "Author share is required!"],
+  },
   updatedAt: {
     type: Date,
     default: Date.now,

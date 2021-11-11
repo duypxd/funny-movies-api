@@ -12,6 +12,7 @@ exports.getVideos = async (req, res) => {
       data: data?.map((m) => ({
         _id: m?._id,
         url: m?.url,
+        authorShare: m?.authorShare,
         videoId: m?.videoId,
         createdAt: m?.createdAt,
         updatedAt: m?.updatedAt,
@@ -33,6 +34,7 @@ exports.postVideo = async (req, res) => {
     const video = new Videos({
       _id: new mongoose.Types.ObjectId(),
       url: req.body.url,
+      authorShare: req.body.authorShare,
       videoId: req.body.videoId,
       createdAt: Date.now(),
     });
@@ -78,6 +80,7 @@ exports.updateLikeOrDisLike = async (req, res) => {
       result: {
         _id: findVideo?._id,
         url: findVideo?._url,
+        authorShare: findVideo.authorShare,
         videoId: findVideo?.videoId,
         createdAt: findVideo?.createdAt,
         updatedAt: findVideo?.updatedAt,

@@ -4,6 +4,13 @@ var jwt = require("jsonwebtoken");
 
 var User = require("../models/User");
 
+const getObjectUser = (resp) => ({
+  _id: resp?.id,
+  email: resp.email,
+  createdAt: resp?.createdAt,
+  fullName: resp.fullName,
+});
+
 exports.signUp = async (req, res) => {
   try {
     const response = await User.find({ email: req.body.email }).exec();
@@ -14,22 +21,35 @@ exports.signUp = async (req, res) => {
       });
     } else {
       bcrypt.hash(req.body.password, 10, (__, hash) => {
-        const userRequest = new User({
+        const newUser = {
           _id: new mongoose.Types.ObjectId(),
           email: req.body.email,
+          fullName: req.body.fullName || "",
           createdAt: Date.now(),
+        };
+        var token = jwt.sign(
+          { _id: newUser._id, email: newUser.email },
+          process.env.JWT_KEY,
+          { expiresIn: "168h" }
+        );
+        const userRequest = new User({
+          ...newUser,
           password: hash,
         });
         userRequest
           .save()
           .then(() => {
-            return res.status(200).send({
+            res.status(200).send({
               status: true,
+              user: {
+                ...newUser,
+                token,
+              },
               message: "Resister successfully!",
             });
           })
           .catch(() => {
-            return res.status(400).send({
+            res.status(400).send({
               status: false,
               message: "Resister failed!",
             });
@@ -37,7 +57,7 @@ exports.signUp = async (req, res) => {
       });
     }
   } catch (err) {
-    return res.status(400).send({
+    res.status(400).send({
       status: false,
       message: "An unexpected error occurred.",
     });
@@ -65,7 +85,10 @@ exports.signIn = async (req, res) => {
         return res.status(200).send({
           status: true,
           message: "Login successfully!",
-          token,
+          user: {
+            ...getObjectUser(response),
+            token,
+          },
         });
       } else {
         return res.status(422).send({
@@ -82,22 +105,12 @@ exports.signIn = async (req, res) => {
   }
 };
 
-exports.signOut = async (req, res) => {
-  try {
-    const token = jwt.destroy();
-  } catch (err) {}
-};
-
 exports.getMe = async (req, res) => {
   try {
     const user = await User.findById({ _id: req.userData._id }).exec();
     res.status(200).send({
       status: true,
-      user: {
-        _id: user?.id,
-        email: user?.email,
-        createdAt: user?.email,
-      },
+      user: getObjectUser(user),
     });
   } catch (err) {
     res.status(400).send({
